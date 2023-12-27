@@ -1,25 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import EpubLoader from './Components/EpubLoader';
+import EpubReader from './Components/EpubReader';
 
-function App() {
+const App = () => {
+  const [bookData, setBookData] = useState(null);
+
+  const handleBookLoad = (data) => {
+    setBookData(data);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      {!bookData ? (
+        <EpubLoader onBookLoad={handleBookLoad} />
+      ) : (
+        <EpubReader bookData={bookData} />
+      )}
     </div>
   );
-}
+};
 
 export default App;
+
+/*
+Ok we got ebook loading in
+Now the bookData needs to be rendered in the reader
+And scrolled upwards using TTS
+*/
