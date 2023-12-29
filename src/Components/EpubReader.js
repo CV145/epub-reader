@@ -3,22 +3,26 @@ import ePub from 'epubjs';
 import '../Styles/EbookReader.css';
 import Navbar from './Navbar';
 
+
 const EpubReader = ({ bookData }) => {
   const viewerRef = useRef();
   const [book, setBook] = useState(null);
   const [rendition, setRendition] = useState(null);
   const [toc, setToc] = useState([]);
-  const [currentChapter, setCurrentChapter] = useState(null); // start as null
+  const [currentChapter, setCurrentChapter] = useState(null); // Start as null
 
   useEffect(() => {
-    if (bookData && !rendition) {
-      console.log("Initializing book and rendition");
-
+    if (bookData) {
       const newBook = ePub(bookData);
       setBook(newBook);
 
       newBook.ready.then(() => {
         setToc(newBook.navigation.toc);
+        if (newBook.navigation.toc.length > 0) {
+          // Automatically set to the first chapter, but don't render yet
+          setCurrentChapter(newBook.navigation.toc[0].href);
+        }
+
         const newRendition = newBook.renderTo(viewerRef.current, {
           width: '100%',
           height: '100%',
@@ -32,7 +36,6 @@ const EpubReader = ({ bookData }) => {
 
     return () => {
       if (rendition) {
-        console.log("Destroying rendition");
         rendition.destroy();
       }
     };
@@ -40,14 +43,12 @@ const EpubReader = ({ bookData }) => {
 
   useEffect(() => {
     if (rendition && currentChapter) {
-      console.log("Displaying chapter:", currentChapter);
       rendition.display(currentChapter);
     }
   }, [currentChapter, rendition]);
 
   const handleChapterSelect = (event) => {
     const chapterHref = event.target.value;
-    console.log("Chapter selected:", chapterHref);
     setCurrentChapter(chapterHref);
   };
 
@@ -58,7 +59,6 @@ const EpubReader = ({ bookData }) => {
     </div>
   );
 };
-
 
 export default EpubReader;
 
