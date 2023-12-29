@@ -1,0 +1,62 @@
+/* EpubReader.css */
+.epub-reader {
+  font-family: 'Georgia', serif; /* A font commonly used for readability in books */
+  font-size: 16px; /* Adjust font size as needed */
+  line-height: 1.5; /* Spacing between lines for readability */
+  color: #333; /* A darker color for better contrast and less strain on the eyes */
+  background-color: #fff; /* A white background to mimic a page */
+  padding: 40px; /* Padding around the content to prevent text from hitting the edges */
+  overflow-y: auto; /* Allows the content to be scrollable */
+  height: calc(100vh - 80px); /* Adjust the height of the reader to take the full height of the viewport minus any headers/footers */
+  width: 70%; /* You can adjust the width as necessary, depending on your sidebar width */
+  margin-left: 30%; /* This margin should correspond to the sidebar width to avoid overlap */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: Adds a subtle shadow to give depth */
+}
+
+/* Handles the layout of paragraphs, headers, and other elements */
+.epub-reader p,
+.epub-reader h1,
+.epub-reader h2,
+.epub-reader h3,
+.epub-reader h4,
+.epub-reader h5,
+.epub-reader h6 {
+  margin-bottom: 0.8em;
+}
+
+/* If you have images or other media in your ePub, you might want to add styles for them */
+.epub-reader img {
+  max-width: 100%;
+  height: auto;
+  display: block; /* Ensures images are centered if they are not full width */
+  margin: 0 auto; /* Centers images within the text */
+}
+
+/* For links or interactive elements within the ePub */
+.epub-reader a {
+  color: #0066cc; /* A standard link color */
+  text-decoration: none; /* Removes underline from links - optional */
+}
+
+/* This style is to handle the active chapter or section, assuming you have a way to mark it */
+.active-section {
+  font-weight: bold;
+  color: #000;
+}
+
+
+select {
+  width: 100%; /* Adjust as needed */
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 16px; /* Adjust as needed */
+  cursor: pointer;
+}
+
+/* Style the dropdown options */
+option {
+  padding: 10px;
+}

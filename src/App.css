@@ -8,9 +8,10 @@ body {
 
 .App {
   display: flex;
-  flex-direction: column;
   height: 100vh;
 }
+
+
 
 .epubViewer {
   flex-grow: 1; /* Make the ePub viewer take up the remaining space */
