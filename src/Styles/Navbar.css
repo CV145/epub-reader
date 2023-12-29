@@ -1,17 +1,19 @@
-/* Navbar.css */
+/* Assuming your Navbar component has a className assigned to it called 'navbar' */
 .navbar {
-    width: 100%;
-    background-color: #fff; /* Adjust the color as needed */
-    padding: 10px 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    position: fixed;
-    top: 0;
-    z-index: 1000;
-  }
+  position: sticky; /* Keeps the navbar fixed at the top */
+  top: 0; /* Aligns the navbar to the top of the viewport */
+  left: 0; /* Aligns the navbar to the left of the viewport */
+  right: 0; /* Aligns the navbar to the right of the viewport */
+  z-index: 100; /* Ensures the navbar stays on top of other elements */
   
-  .dropdown-container {
-    /* Style your dropdown container */
-  }
-  
-  /* Rest of your dropdown styling */
-  
+  /* Rest of your styling here */
+  background: #ffffff; /* Example background color */
+  padding: 0.5em 1em; /* Example padding */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Example shadow for depth */
+  /* ... */
+}
+
+/* You'll need to add some top padding to the main container or the epub-viewer to prevent it from being hidden behind the navbar */
+.epub-viewer {
+  padding-top: 70px; /* Adjust this value to match the height of your navbar */
+}

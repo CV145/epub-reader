@@ -1,4 +1,5 @@
 import React from 'react';
+import '../Styles/Navbar.css';
 
 const Navbar = ({ toc, currentChapter, onChapterSelect }) => {
   return (
