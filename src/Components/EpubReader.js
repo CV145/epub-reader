@@ -1,81 +1,47 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { processHtmlToParagraphs, processXmlToParagraphs, processCustomTagToParagraphs } from '../textProcessing';
 import ePub from 'epubjs';
 import '../Styles/EbookReader.css';
 import Navbar from './Navbar';
 import BottomNavbar from './BottomNavbar';
+import { useBookLoader } from '../Hooks/useBookLoader';
 
 
 const EpubReader = ({ bookData }) => {
   const viewerRef = useRef();
-  const [book, setBook] = useState(null);
-  const [rendition, setRendition] = useState(null);
-  const [toc, setToc] = useState([]);
-  const [currentChapter, setCurrentChapter] = useState(null); 
-  const [readingProgress, setReadingProgress] = useState({
-    playing: false,
-    percentage: 0, // Initialize the progress percentage
-  });
+  const [currentChapter, setCurrentChapter] = useState(null);
+  const [readingProgress, setReadingProgress] = useState({ playing: false, percentage: 0 });
+
+  // Custom hook to load and manage the book
+  const { book, toc, rendition, loadChapter } = useBookLoader(bookData, viewerRef, currentChapter);
 
   useEffect(() => {
-    if (bookData) {
-      const newBook = ePub(bookData);
-      setBook(newBook);
-
-      newBook.ready.then(() => {
-        setToc(newBook.navigation.toc);
-        if (newBook.navigation.toc.length > 0) {
-          // Automatically set to the first chapter, but don't render yet
-          setCurrentChapter(newBook.navigation.toc[0].href);
-        }
-
-        const newRendition = newBook.renderTo(viewerRef.current, {
-          width: '100%',
-          height: '100%',
-          flow: 'scrolled-doc',
-        });
-        setRendition(newRendition);
-      }).catch(error => {
-        console.error('Error loading the book: ', error);
-      });
-    }
-
-    return () => {
-      if (rendition) {
-        rendition.destroy();
-      }
-    };
-  }, [bookData]);
-
-  useEffect(() => {
+    // Display the current chapter using the rendition
     if (rendition && currentChapter) {
       rendition.display(currentChapter);
     }
   }, [currentChapter, rendition]);
 
   const handleChapterSelect = (event) => {
-    const chapterHref = event.target.value;
-    setCurrentChapter(chapterHref);
+    setCurrentChapter(event.target.value);
   };
 
-
   const handleTogglePlay = () => {
-    // Handle toggling of play/pause state and functionality
     setReadingProgress((prevProgress) => ({
       ...prevProgress,
       playing: !prevProgress.playing,
     }));
-    // You'll also need to handle audio play/pause and scrolling here
+    // Additional functionality for audio play/pause and scrolling
   };
 
   return (
     <div className="epub-reader-container">
       <Navbar toc={toc} currentChapter={currentChapter} onChapterSelect={handleChapterSelect} />
       <div ref={viewerRef} className="epub-viewer"></div>
-      <BottomNavbar progress={readingProgress} onTogglePlay={handleTogglePlay}/>
+      <BottomNavbar progress={readingProgress} onTogglePlay={handleTogglePlay} />
     </div>
   );
 };
-
 export default EpubReader;
 
 
