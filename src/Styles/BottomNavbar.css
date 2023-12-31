@@ -1,0 +1,34 @@
+/* BottomNavbar.css */
+.bottom-navbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  z-index: 1000;
+}
+
+.progress-bar-container {
+  position: absolute;
+  width: 100%;
+  top: 0;
+}
+
+.progress-bar {
+  height: 4px;
+  background-color: #0d6efd; /* Bootstrap primary color for example */
+  transition: width 0.5s ease;
+}
+
+.play-pause-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #333;
+  cursor: pointer;
+}

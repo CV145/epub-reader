@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import ePub from 'epubjs';
 import '../Styles/EbookReader.css';
 import Navbar from './Navbar';
+import BottomNavbar from './BottomNavbar';
 
 
 const EpubReader = ({ bookData }) => {
@@ -9,7 +10,11 @@ const EpubReader = ({ bookData }) => {
   const [book, setBook] = useState(null);
   const [rendition, setRendition] = useState(null);
   const [toc, setToc] = useState([]);
-  const [currentChapter, setCurrentChapter] = useState(null); // Start as null
+  const [currentChapter, setCurrentChapter] = useState(null); 
+  const [readingProgress, setReadingProgress] = useState({
+    playing: false,
+    percentage: 0, // Initialize the progress percentage
+  });
 
   useEffect(() => {
     if (bookData) {
@@ -52,10 +57,21 @@ const EpubReader = ({ bookData }) => {
     setCurrentChapter(chapterHref);
   };
 
+
+  const handleTogglePlay = () => {
+    // Handle toggling of play/pause state and functionality
+    setReadingProgress((prevProgress) => ({
+      ...prevProgress,
+      playing: !prevProgress.playing,
+    }));
+    // You'll also need to handle audio play/pause and scrolling here
+  };
+
   return (
     <div className="epub-reader-container">
       <Navbar toc={toc} currentChapter={currentChapter} onChapterSelect={handleChapterSelect} />
       <div ref={viewerRef} className="epub-viewer"></div>
+      <BottomNavbar progress={readingProgress} onTogglePlay={handleTogglePlay}/>
     </div>
   );
 };
@@ -70,9 +86,6 @@ The rendition.display() method in epubjs is used to display a specific section o
 
 /*
 TODO:
-- Create the table of contents in the navbar menu on the left side
-- Hide/Show the navbar menu using sandwich button
-- Create play/pause buttons
 - Slowly scroll the text upwards when the play state is active
 
 - Create a TTS system that reads the book back to you
