@@ -6,6 +6,7 @@ export const useBookLoader = (bookData, viewerRef) => {
   const [toc, setToc] = useState([]);
   const [rendition, setRendition] = useState(null);
   const [currentChapter, setCurrentChapter] = useState(null);
+  const [currentChapterText, setCurrentChapterText] = useState('');
 
   useEffect(() => {
     if (bookData) {
@@ -14,12 +15,8 @@ export const useBookLoader = (bookData, viewerRef) => {
       newBook.ready.then(() => {
         setBook(newBook);
         setToc(newBook.navigation.toc);
-        if (newBook.navigation.toc.length > 0) {
-          setCurrentChapter(newBook.navigation.toc[0].href); // Set the first chapter
-        }
-      }).catch(error => {
-        console.error('Error loading the book: ', error);
-      });
+        // Consider setting the first chapter here if needed
+      }).catch(error => console.error('Error loading the book: ', error));
 
       newBook.loaded.navigation.then(() => {
         const newRendition = newBook.renderTo(viewerRef.current, {
@@ -28,12 +25,7 @@ export const useBookLoader = (bookData, viewerRef) => {
           flow: 'scrolled-doc',
         });
         setRendition(newRendition);
-        if (currentChapter) {
-          newRendition.display(currentChapter); // Display the first chapter
-        }
-      }).catch(error => {
-        console.error('Error setting up the book rendition: ', error);
-      });
+      }).catch(error => console.error('Error setting up the book rendition: ', error));
 
       return () => {
         if (rendition) {
@@ -41,17 +33,21 @@ export const useBookLoader = (bookData, viewerRef) => {
         }
       };
     }
-  }, [bookData, viewerRef, currentChapter]);
+  }, [bookData, viewerRef]);
 
   const loadChapter = (chapterHref) => {
-    if (book && rendition) {
-      rendition.display(chapterHref).catch(error => {
-        console.error("Error displaying chapter:", error);
-      });
+    const chapterIndex = book.navigation.toc.findIndex(item => item.href === chapterHref);
+    if (chapterIndex !== -1 && book) {
+      const chapter = book.spine.get(chapterIndex);
+      chapter.load(book.load.bind(book)).then(doc => {
+        const serializer = new XMLSerializer();
+        const chapterHtml = serializer.serializeToString(doc);
+        setCurrentChapterText(chapterHtml);
+      }).catch(error => console.error("Error loading chapter content:", error));
     } else {
-      console.error("Book or rendition is not initialized.");
+      console.error("Chapter not found in TOC.");
     }
   };
 
-  return { book, toc, rendition, loadChapter };
+  return { book, toc, rendition, currentChapter, setCurrentChapter, currentChapterText, setCurrentChapterText, loadChapter };
 };

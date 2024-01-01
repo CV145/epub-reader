@@ -60,3 +60,9 @@ select {
 option {
   padding: 10px;
 }
+
+.chapter-text-container {
+  padding: 1em;
+  margin: 1em;
+  /* Add more styles as needed for your layout and design */
+}

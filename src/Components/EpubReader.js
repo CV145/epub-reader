@@ -1,48 +1,111 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { processHtmlToParagraphs, processXmlToParagraphs, processCustomTagToParagraphs } from '../textProcessing';
 import ePub from 'epubjs';
 import '../Styles/EbookReader.css';
 import Navbar from './Navbar';
 import BottomNavbar from './BottomNavbar';
 import { useBookLoader } from '../Hooks/useBookLoader';
 
-
 const EpubReader = ({ bookData }) => {
   const viewerRef = useRef();
-  const [currentChapter, setCurrentChapter] = useState(null);
   const [readingProgress, setReadingProgress] = useState({ playing: false, percentage: 0 });
+  const [ttsUtterance, setTtsUtterance] = useState(null);
 
-  // Custom hook to load and manage the book
-  const { book, toc, rendition, loadChapter } = useBookLoader(bookData, viewerRef, currentChapter);
+  const {
+    book,
+    toc,
+    rendition,
+    currentChapter,
+    setCurrentChapter,
+    currentChapterText,
+    setCurrentChapterText,
+    loadChapter,
+  } = useBookLoader(bookData, viewerRef);
+  
 
+  const testTTS = () => {
+    const utterance = new SpeechSynthesisUtterance('Hello world');
+    speechSynthesis.speak(utterance);
+  };
+  
+
+  const startTTS = () => {
+    console.log("starting tts");
+    if (!currentChapterText || readingProgress.playing) return;
+
+    const utterance = new SpeechSynthesisUtterance(currentChapterText);
+
+    console.log("Current chapter text: " + currentChapterText);
+
+    utterance.onend = () => {
+      setReadingProgress(prev => ({ ...prev, playing: false }));
+    };
+    speechSynthesis.speak(utterance);
+
+    setTtsUtterance(utterance);
+    setReadingProgress(prev => ({ ...prev, playing: true }));
+  };
+
+  const stopTTS = () => {
+    if (ttsUtterance) {
+      speechSynthesis.cancel();
+    }
+    setReadingProgress(prev => ({ ...prev, playing: false }));
+  };
+
+  const handleTogglePlay = () => {
+    testTTS();
+    setReadingProgress(prevProgress => {
+      if (prevProgress.playing) {
+        stopTTS();
+      } else {
+        startTTS();
+      }
+      return {
+        ...prevProgress,
+        playing: !prevProgress.playing,
+      };
+    });
+  };
+
+  const handleChapterLoaded = (text) => {
+    setCurrentChapterText(text);
+  };
+
+  
   useEffect(() => {
-    // Display the current chapter using the rendition
     if (rendition && currentChapter) {
+      loadChapter(currentChapter, (chapterText) => {
+        setCurrentChapterText(chapterText); // Update the chapter text state
+      });
       rendition.display(currentChapter);
     }
-  }, [currentChapter, rendition]);
+  }, [currentChapter, rendition, loadChapter]);
+  
 
   const handleChapterSelect = (event) => {
     setCurrentChapter(event.target.value);
   };
-
-  const handleTogglePlay = () => {
-    setReadingProgress((prevProgress) => ({
-      ...prevProgress,
-      playing: !prevProgress.playing,
-    }));
-    // Additional functionality for audio play/pause and scrolling
-  };
+  
+  
 
   return (
     <div className="epub-reader-container">
       <Navbar toc={toc} currentChapter={currentChapter} onChapterSelect={handleChapterSelect} />
+      
+      {/* Container to display the chapter text */}
+      <div className="chapter-text-container" dangerouslySetInnerHTML={{ __html: currentChapterText }}></div>
+      
+      {/* Viewer ref might be used for other purposes, like displaying the chapter as a styled page */}
       <div ref={viewerRef} className="epub-viewer"></div>
+      
       <BottomNavbar progress={readingProgress} onTogglePlay={handleTogglePlay} />
     </div>
   );
+  
 };
+
 export default EpubReader;
+
 
 
 /*
