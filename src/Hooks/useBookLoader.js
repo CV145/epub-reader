@@ -15,10 +15,19 @@ export const useBookLoader = (bookData, viewerRef) => {
       newBook.ready.then(() => {
         setBook(newBook);
         setToc(newBook.navigation.toc);
-        // Consider setting the first chapter here if needed
-      }).catch(error => console.error('Error loading the book: ', error));
+        console.log("TOC:", newBook.navigation.toc);
+
+        if (newBook.navigation.toc.length > 0) {
+          // Set the initial chapter to the first item in the TOC
+          const firstChapterHref = newBook.navigation.toc[0].href;
+          setCurrentChapter(firstChapterHref);
+        }
+      }).catch(error => {
+        console.error('Error loading the book: ', error);
+      });
 
       newBook.loaded.navigation.then(() => {
+        console.log("TOC loaded:", newBook.navigation.toc);
         const newRendition = newBook.renderTo(viewerRef.current, {
           width: '100%',
           height: '100%',
@@ -35,19 +44,46 @@ export const useBookLoader = (bookData, viewerRef) => {
     }
   }, [bookData, viewerRef]);
 
+  const findChapterInToc = (tocItems, href) => {
+    for (const item of tocItems) {
+      if (item.href === href) {
+        return item;
+      }
+      if (item.subitems) {
+        const found = findChapterInToc(item.subitems, href);
+        if (found) {
+          return found;
+        }
+      }
+    }
+    return null;
+  };
+
   const loadChapter = (chapterHref) => {
-    const chapterIndex = book.navigation.toc.findIndex(item => item.href === chapterHref);
-    if (chapterIndex !== -1 && book) {
-      const chapter = book.spine.get(chapterIndex);
+    console.log('Attempting to load chapter:', chapterHref);
+
+    const chapterItem = findChapterInToc(book.navigation.toc, chapterHref);
+    if (chapterItem && book) {
+      const chapter = book.spine.get(chapterItem.index);
+
       chapter.load(book.load.bind(book)).then(doc => {
         const serializer = new XMLSerializer();
         const chapterHtml = serializer.serializeToString(doc);
+
+        setCurrentChapterText('');
         setCurrentChapterText(chapterHtml);
+        setCurrentChapter(chapterHref);
+
       }).catch(error => console.error("Error loading chapter content:", error));
     } else {
-      console.error("Chapter not found in TOC.");
+      console.error("Chapter not found in TOC:", chapterHref);
     }
   };
 
+
+
+
   return { book, toc, rendition, currentChapter, setCurrentChapter, currentChapterText, setCurrentChapterText, loadChapter };
 };
+
+

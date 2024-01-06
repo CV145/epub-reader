@@ -1,34 +1,73 @@
-/* BottomNavbar.css */
 .bottom-navbar {
   position: fixed;
-  bottom: 0;
+  /* Fixed positioning relative to the viewport */
   left: 0;
+  /* Align to the far left */
   right: 0;
-  background-color: white;
-  color: #333;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  z-index: 1000;
-}
-
-.progress-bar-container {
-  position: absolute;
+  /* Align to the far right */
+  bottom: 0;
+  /* Anchor to the bottom */
   width: 100%;
-  top: 0;
+  /* Ensure it takes up the full width of the screen */
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Semi-transparent black for visibility */
+  color: white;
+  /* Text color */
+  z-index: 10;
+  /* Higher than the content so it stays on top */
+  align-items: center;
+  /* Align items vertically */
+  justify-content: space-between;
+  display: flex;
+  padding: 0.5em;
+  /* Add some padding inside the navbar */
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+  /* Optional: shadow for depth */
+  /* Add other styles such as border, height, etc., as needed */
 }
 
-.progress-bar {
-  height: 4px;
-  background-color: #0d6efd; /* Bootstrap primary color for example */
-  transition: width 0.5s ease;
-}
-
-.play-pause-btn {
-  background: none;
+/* Common base styles for both buttons */
+.bottom-navbar button {
+  padding: 10px 20px;
   border: none;
-  font-size: 24px;
-  color: #333;
+  font-size: 16px;
   cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+  /* Add any other common styles here */
+}
+
+/* Specific styles for the left button */
+.bottom-navbar .button-left {
+  background-color: #ff6b6b69;
+  /* Example: a shade of blue */
+  color: white;
+  border-radius: 5px;
+  /* Giving the button rounded corners */
+  margin-left: 10px;
+  /* Space from the left edge */
+}
+
+.bottom-navbar .button-left:hover {
+  background-color: #1669c1;
+  /* A darker shade on hover */
+  transform: translateY(-2px);
+  /* Slight raise effect on hover */
+}
+
+/* Specific styles for the right button */
+.bottom-navbar .button-right {
+  background-color: #4ecdc595;
+  /* Example: a shade of green */
+  color: white;
+  border-radius: 5px;
+  /* Giving the button rounded corners */
+  margin-right: 30px;
+  /* Space from the right edge */
+}
+
+.bottom-navbar .button-right:hover {
+  background-color: #2c8b46;
+  /* A darker shade on hover */
+  transform: translateY(-2px);
+  /* Slight raise effect on hover */
 }
