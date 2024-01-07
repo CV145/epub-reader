@@ -15,10 +15,8 @@ export const useBookLoader = (bookData, viewerRef) => {
       newBook.ready.then(() => {
         setBook(newBook);
         setToc(newBook.navigation.toc);
-        console.log("TOC:", newBook.navigation.toc);
 
         if (newBook.navigation.toc.length > 0) {
-          // Set the initial chapter to the first item in the TOC
           const firstChapterHref = newBook.navigation.toc[0].href;
           setCurrentChapter(firstChapterHref);
         }
@@ -27,22 +25,27 @@ export const useBookLoader = (bookData, viewerRef) => {
       });
 
       newBook.loaded.navigation.then(() => {
-        console.log("TOC loaded:", newBook.navigation.toc);
         const newRendition = newBook.renderTo(viewerRef.current, {
           width: '100%',
           height: '100%',
           flow: 'scrolled-doc',
         });
+
+        // Attach the event listener for the rendered event
+        newRendition.on('rendered', handleRendered);
+
         setRendition(newRendition);
       }).catch(error => console.error('Error setting up the book rendition: ', error));
 
+      // Cleanup function to remove event listener and destroy rendition
       return () => {
         if (rendition) {
-          rendition.destroy();
+          rendition.off('rendered', handleRendered); // Remove event listener
+          rendition.destroy(); // Destroy rendition
         }
       };
     }
-  }, [bookData, viewerRef]);
+  }, [bookData, viewerRef]); // Include rendition in the dependency array
 
   const findChapterInToc = (tocItems, href) => {
     for (const item of tocItems) {
@@ -57,6 +60,10 @@ export const useBookLoader = (bookData, viewerRef) => {
       }
     }
     return null;
+  };
+
+  const handleRendered = section => {
+    setCurrentChapter(section.href);
   };
 
   const loadChapter = (chapterHref) => {
@@ -83,8 +90,6 @@ export const useBookLoader = (bookData, viewerRef) => {
       console.error("Chapter not found in TOC:", chapterHref);
     }
   };
-
-
 
 
   return { book, toc, rendition, currentChapter, setCurrentChapter, currentChapterText, setCurrentChapterText, loadChapter };
