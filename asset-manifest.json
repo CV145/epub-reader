@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/CV145/epub-reader/static/css/main.abb3c9d9.css",
+    "main.js": "/CV145/epub-reader/static/js/main.dcbede35.js",
+    "static/js/787.d6291a23.chunk.js": "/CV145/epub-reader/static/js/787.d6291a23.chunk.js",
+    "index.html": "/CV145/epub-reader/index.html",
+    "main.abb3c9d9.css.map": "/CV145/epub-reader/static/css/main.abb3c9d9.css.map",
+    "main.dcbede35.js.map": "/CV145/epub-reader/static/js/main.dcbede35.js.map",
+    "787.d6291a23.chunk.js.map": "/CV145/epub-reader/static/js/787.d6291a23.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.abb3c9d9.css",
+    "static/js/main.dcbede35.js"
+  ]
+}
