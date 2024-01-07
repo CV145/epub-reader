@@ -68,10 +68,14 @@ export const useBookLoader = (bookData, viewerRef) => {
 
       chapter.load(book.load.bind(book)).then(doc => {
         const serializer = new XMLSerializer();
-        const chapterHtml = serializer.serializeToString(doc);
+        let chapterHtml = serializer.serializeToString(doc);
 
-        setCurrentChapterText('');
-        setCurrentChapterText(chapterHtml);
+        //Callback - ensure chapter is set only after content is cleared (React batches state updates which causes issues)
+        setCurrentChapterText('', () => {
+          setCurrentChapterText(chapterHtml);
+        });
+
+        //Updates the current chapter state
         setCurrentChapter(chapterHref);
 
       }).catch(error => console.error("Error loading chapter content:", error));
